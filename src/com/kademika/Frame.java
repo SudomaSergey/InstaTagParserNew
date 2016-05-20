@@ -6,6 +6,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
+import com.kademika.domain.ReportFile;
+import com.kademika.domain.Tag;
 import com.kademika.parser.TagParser;
 
 import javax.swing.SpringLayout;
@@ -16,8 +18,11 @@ import javax.swing.JTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
+import javax.swing.SwingConstants;
 
 class Frame extends JPanel {
 
@@ -25,6 +30,8 @@ class Frame extends JPanel {
 	private TagParser parser;
 	private JTextArea resultArea;
 	private JFormattedTextField depthField;
+	private JButton saveButton;
+	private ArrayList<Tag> tagsList;
 
 	public Frame(TagParser parser) {
 		this.parser = parser;
@@ -54,6 +61,7 @@ class Frame extends JPanel {
 		JButton btnStartSearch = new JButton("Start");
 		springLayout.putConstraint(SpringLayout.NORTH, btnStartSearch, 0, SpringLayout.NORTH, instructionLabel);
 		springLayout.putConstraint(SpringLayout.WEST, btnStartSearch, 6, SpringLayout.EAST, tagTextField);
+		springLayout.putConstraint(SpringLayout.SOUTH, btnStartSearch, 0, SpringLayout.SOUTH, instructionLabel);
 		add(btnStartSearch);
 
 		btnStartSearch.addActionListener(new ActionListener() {
@@ -63,10 +71,11 @@ class Frame extends JPanel {
 				try {
 					String tag = tagTextField.getText();
 					Integer depth = Integer.parseInt(depthField.getText());
-					String result = parser.parse(tag, depth).toString();
-
+					tagsList = (ArrayList<Tag>) parser.parse(tag, depth);
+					String result = tagsList.toString();
 					resultArea.setText(tag + " " + String.valueOf(depth));
 					resultArea.setText(result);
+					saveButton.setEnabled(true);
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, "Check input fields", "Warning", JOptionPane.WARNING_MESSAGE);
 				}
@@ -81,7 +90,6 @@ class Frame extends JPanel {
 		resultArea.setLineWrap(true);
 
 		JScrollPane scrollPane = new JScrollPane(resultArea);
-		springLayout.putConstraint(SpringLayout.SOUTH, btnStartSearch, -19, SpringLayout.NORTH, scrollPane);
 		springLayout.putConstraint(SpringLayout.NORTH, scrollPane, 97, SpringLayout.NORTH, this);
 		springLayout.putConstraint(SpringLayout.SOUTH, scrollPane, -10, SpringLayout.SOUTH, this);
 		springLayout.putConstraint(SpringLayout.EAST, btnStartSearch, 0, SpringLayout.EAST, scrollPane);
@@ -102,6 +110,22 @@ class Frame extends JPanel {
 		springLayout.putConstraint(SpringLayout.EAST, depthField, 65, SpringLayout.EAST, instructionLabel);
 		depthField.setColumns(10);
 		add(depthField);
+		
+		saveButton = new JButton("<html>Save <br> results </br></html>");
+		springLayout.putConstraint(SpringLayout.SOUTH, saveButton, -6, SpringLayout.NORTH, scrollPane);
+		saveButton.setToolTipText("");
+		springLayout.putConstraint(SpringLayout.NORTH, saveButton, 6, SpringLayout.SOUTH, tagTextField);
+		springLayout.putConstraint(SpringLayout.WEST, saveButton, 0, SpringLayout.WEST, btnStartSearch);
+		springLayout.putConstraint(SpringLayout.EAST, saveButton, 0, SpringLayout.EAST, btnStartSearch);
+		add(saveButton);
+		saveButton.setEnabled(false);
+		saveButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ReportFile(tagsList);				
+			}
+		});
 
 		frame.setVisible(true);
 
