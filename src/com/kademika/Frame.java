@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
-import javax.swing.SwingConstants;
 
 class Frame extends JPanel {
 

@@ -6,7 +6,6 @@ public class Launcher {
 
 	public static void main(String[] args) {
 
-		new Frame(new Top9Parser());
+		new Frame(new Top9Parser());		
 	}
-
 }

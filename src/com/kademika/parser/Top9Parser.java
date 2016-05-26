@@ -44,8 +44,8 @@ public class Top9Parser implements TagParser {
 				tempAllTagsList.addAll(tempTagsList);
 			}
 		}
-
-		allTagsList = joinTagLists(allTagsList, allTagsList);
+		
+		//allTagsList = joinTagLists(allTagsList, allTagsList);
 		allTagsList = joinTagLists(allTagsList, tempAllTagsList);
 
 		Collections.sort(allTagsList);
@@ -57,8 +57,8 @@ public class Top9Parser implements TagParser {
 
 		for (Tag tag : tempAllTagsList) {
 			if (allTagsList.contains(tag)) {
-				int tagIdxInAllTagsList = allTagsList.indexOf(tag);
-				allTagsList.get(tagIdxInAllTagsList).updateCount();
+				int tagIdx = allTagsList.indexOf(tag);
+				allTagsList.get(tagIdx).updateCount();
 			} else {
 				allTagsList.add(tag);
 			}

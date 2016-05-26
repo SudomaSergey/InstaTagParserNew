@@ -27,19 +27,42 @@ class ParserLogic implements ParserLogicI {
 		ArrayList<Tag> result = parseTags(splitedImages);
 		return result;
 	}
+	
+	private String normalizeTagName(String oldName){
+		
+		int lenght = oldName.length();
+		char lastChar = oldName.charAt(lenght - 1); 
+		
+		String newName = oldName;
+		
+		if(lastChar == ',' ||
+		   lastChar == '*' ||
+		   lastChar == '.' ||
+		   lastChar == '"' ||
+		   lastChar == '#' ||
+		   lastChar == '?' ||
+		   lastChar == '!' ||
+		   lastChar == '\\' ||
+		   lastChar == '\''){
+							newName = oldName.substring(0, lenght - 1);
+		}
+		return newName;		
+	}
 
 	private ArrayList<Tag> parseTags(String[] splitedImages) {
 		ArrayList<Tag> tagsList = new ArrayList<>();
-		Pattern p = Pattern.compile("#[^ [а-я][А-Я]]+\\s");
+		Pattern p = Pattern.compile("#[[а-я][А-Я]іїґєІЇҐЄ]+[\\W|\\s]");
 		for (int i = 1; i < splitedImages.length; i++) {
 			Matcher m = p.matcher(splitedImages[i]);
 			while (m.find()) {
 				Tag tag = new Tag();
-				tag.setName(splitedImages[i].substring(m.start() + 1, m.end()));
+				String tagName = splitedImages[i].substring(m.start() + 1, m.end());  
+				String normalizedTagName = normalizeTagName(tagName);
+				tag.setName(normalizedTagName);
 				tag.setCount(1);
 				if (tagsList.contains(tag)) {
-					int tagIdxInAllTagsList = tagsList.indexOf(tag);
-					tagsList.get(tagIdxInAllTagsList).updateCount();
+					int tagIdx = tagsList.indexOf(tag);
+					tagsList.get(tagIdx).updateCount();
 				} else {
 					tagsList.add(tag);
 				}
